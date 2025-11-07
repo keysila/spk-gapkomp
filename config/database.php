@@ -1,12 +1,24 @@
 <?php
+
+// Muat variabel dari file .env
+$envPath = __DIR__ . '/../.env';
+if (file_exists($envPath)) {
+    $lines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    foreach ($lines as $line) {
+        if (strpos(trim($line), '#') === 0) continue;
+        [$name, $value] = explode('=', $line, 2);
+        $_ENV[trim($name)] = trim(str_replace('"', '', $value));
+    }
+}
+
 // Konfigurasi Database
-define('DB_HOST', 'localhost');
-define('DB_USER', 'root');
-define('DB_PASS', '');
-define('DB_NAME', 'gapkomp');
+$host = $_ENV['DB_HOST'] ?? 'localhost';
+$user = $_ENV['DB_USER'] ?? 'root';
+$pass = $_ENV['DB_PASS'] ?? '';
+$db   = $_ENV['DB_NAME'] ?? 'gapkompetensi';
 
 // Koneksi Database
-$conn = mysqli_connect(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+$conn = mysqli_connect($host, $user, $pass, $db);
 
 // Cek koneksi
 if (!$conn) {
